@@ -7,10 +7,16 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 import {MatSliderModule} from '@angular/material/slider';
 import {MatTabsModule} from '@angular/material/tabs';
+import { ConcatComponent } from '../components/concat/concat.component';
+import { MergeComponent } from '../components/merge/merge.component';
+import { MergeretryComponent } from '../components/mergeretry/mergeretry.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    ConcatComponent,
+    MergeComponent,
+    MergeretryComponent
   ],
   imports: [
     BrowserModule,
