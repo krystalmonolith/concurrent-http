@@ -5,24 +5,24 @@ import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
-import {MatSliderModule} from '@angular/material/slider';
 import {MatTabsModule} from '@angular/material/tabs';
-import { ConcatComponent } from '../components/concat/concat.component';
-import { MergeComponent } from '../components/merge/merge.component';
-import { MergeretryComponent } from '../components/mergeretry/mergeretry.component';
+import {MatCardModule} from '@angular/material/card'
+import {ConcatComponent} from '../components/concat/concat.component';
+import {MergeComponent} from '../components/merge/merge.component';
+import {MergeRetryComponent} from '../components/merge-retry/merge-retry.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     ConcatComponent,
     MergeComponent,
-    MergeretryComponent
+    MergeRetryComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    MatSliderModule,
+    MatCardModule,
     MatTabsModule
   ],
   providers: [],
