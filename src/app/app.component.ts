@@ -11,12 +11,14 @@ export class AppComponent implements OnInit {
   title = 'concurrent-http';
   @ViewChild('sliderText') sliderText!: ElementRef;
 
-  links = ['RxJS concat','RxJS merge','RxJS merge with retry'];
-  activeLink = this.links[0];
-  background: ThemePalette = undefined;
+  links = [
+    { label: 'RxJS concat', route: '/concat' },
+    { label: 'RxJS merge', route: '/merge' },
+    { label: 'RxJS merge with retry', route: '/mergeretry' }
+  ];
+  background: ThemePalette = 'primary';
 
   ngOnInit() {
-    this.background = 'primary';
   }
 
   toggleBackground() {
