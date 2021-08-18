@@ -12,5 +12,11 @@
   <span class="example-selected-value">&nbsp;File Size: <span class="fileSizeValue">{{fileSize}}</span></span>
 </div>
 
-<li *ngFor="let file of fileList">{{file}}</li>
+<mat-grid-list cols="8" rowHeight="100px">
+  <mat-grid-tile *ngFor="let image of images"><img src="{{image}}" /></mat-grid-tile>
+</mat-grid-list>
+
+<ul>
+  <li *ngFor="let file of fileList">{{file}}</li>
+</ul>
 
