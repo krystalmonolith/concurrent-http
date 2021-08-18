@@ -16,6 +16,7 @@ import {ImageGridComponent} from './components/image-grid/image-grid.component';
 import {MergeComponent} from './components/merge/merge.component';
 import {MergeRetryComponent} from './components/merge-retry/merge-retry.component';
 import {ConcatComponent} from './components/concat/concat.component';
+import {MatGridListModule} from '@angular/material/grid-list';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import {ConcatComponent} from './components/concat/concat.component';
     MatCardModule,
     MatTabsModule,
     MatButtonToggleModule,
-    MatIconModule
+    MatIconModule,
+    MatGridListModule
   ],
   providers: [
     FileService
