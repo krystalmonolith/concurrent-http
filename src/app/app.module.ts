@@ -7,9 +7,11 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 import {MatTabsModule} from '@angular/material/tabs';
 import {MatCardModule} from '@angular/material/card'
-import {ConcatComponent} from '../components/concat/concat.component';
-import {MergeComponent} from '../components/merge/merge.component';
-import {MergeRetryComponent} from '../components/merge-retry/merge-retry.component';
+import {ConcatComponent} from './components/concat/concat.component';
+import {MergeComponent} from './components/merge/merge.component';
+import {MergeRetryComponent} from './components/merge-retry/merge-retry.component';
+import {HttpClientModule} from '@angular/common/http';
+import {FileService} from './services/file.service';
 
 @NgModule({
   declarations: [
@@ -22,10 +24,13 @@ import {MergeRetryComponent} from '../components/merge-retry/merge-retry.compone
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
+    HttpClientModule,
     MatCardModule,
     MatTabsModule
   ],
-  providers: [],
+  providers: [
+    FileService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {

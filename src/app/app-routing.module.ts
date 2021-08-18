@@ -1,8 +1,8 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
-import {ConcatComponent} from '../components/concat/concat.component';
-import {MergeComponent} from '../components/merge/merge.component';
-import {MergeRetryComponent} from '../components/merge-retry/merge-retry.component';
+import {ConcatComponent} from './components/concat/concat.component';
+import {MergeComponent} from './components/merge/merge.component';
+import {MergeRetryComponent} from './components/merge-retry/merge-retry.component';
 
 const routes: Routes = [
   {path: 'concat', component: ConcatComponent},
