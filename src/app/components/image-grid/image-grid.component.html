@@ -1,0 +1,14 @@
+<div class="outer">
+  <mat-button-toggle-group #fileSizeGroup="matButtonToggleGroup" (valueChange)="fileSizeValueChange($event)" [value]="VALUE_SMALL">
+    <mat-button-toggle value="{{VALUE_SMALL}}" aria-label="Small Files (100x100)">
+      <mat-icon>south</mat-icon>
+    </mat-button-toggle>
+    <mat-button-toggle value="{{VALUE_LARGE}}" aria-label="Large files (640x480)">
+      <mat-icon>north</mat-icon>
+    </mat-button-toggle>
+  </mat-button-toggle-group>
+  <span class="example-selected-value">&nbsp;File Size: <span class="fileSizeValue">{{fileSize}}</span></span>
+</div>
+
+<li *ngFor="let file of fileList">{{file}}</li>
+
