@@ -11,9 +11,9 @@ export class AppComponent {
   @ViewChild('sliderText') sliderText!: ElementRef;
 
   links = [
-    {label: 'RxJS concat', route: '/concat'},
-    {label: 'RxJS merge', route: '/merge'},
-    {label: 'RxJS merge with retry', route: '/mergeretry'}
+    {label: 'RxJS concatAll()', route: '/concat'},
+    {label: 'RxJS mergeAll()', route: '/merge'},
+    {label: 'RxJS mergeAll() with retry', route: '/mergeretry'}
   ];
   background: ThemePalette = 'primary';
 }

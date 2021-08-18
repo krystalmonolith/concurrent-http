@@ -1,8 +1,7 @@
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
-import {FileList, FileService} from '../../services/file.service';
-import {MatButtonToggleGroup} from '@angular/material/button-toggle';
+import {Component, Input, OnInit} from '@angular/core';
+import {FileService} from '../../services/file.service';
 import {defer, from} from 'rxjs';
-import {concatAll, map} from 'rxjs/operators';
+import {map, mergeAll} from 'rxjs/operators';
 
 @Component({
   selector: 'app-image-grid',
@@ -11,20 +10,17 @@ import {concatAll, map} from 'rxjs/operators';
 })
 export class ImageGridComponent implements OnInit {
 
-  readonly VALUE_SMALL = 'Small Images (100x100)';
-  readonly VALUE_LARGE = 'Large Images (640x480)';
   fileList: Array<string> = [];
 
-  public static readonly FETCH_MODE_CONCAT = 'CONCAT';
-  public static readonly FETCH_MODE_MERGE = 'MERGE';
-  public static readonly FETCH_MODE_MERGERETRY = 'MERGE RETRY';
+  static readonly FETCH_MODE_CONCAT = 'CONCAT';
+  static readonly FETCH_MODE_MERGE = 'MERGE';
+  static readonly FETCH_MODE_MERGERETRY = 'MERGE RETRY';
   @Input() fetchMode: string = '';
 
   @Input() title: string = '';
-  fileSize: string = this.VALUE_SMALL;
-  @ViewChild('fileSizeGroup') fileSizeGroup?: MatButtonToggleGroup;
 
   images: Array<string> = [];
+  fileFailPercent: number = 0;
 
   constructor(private fileService: FileService) {
   }
@@ -93,8 +89,9 @@ export class ImageGridComponent implements OnInit {
   loadImages(): void {
     from(this.fileList)
       .pipe(
-        map((file: string) => defer(() => this.fileService.getFile((this.fileSize === this.VALUE_SMALL ? FileList.SMALL : FileList.LARGE), file))),
-        concatAll()
+        map((file: string) => defer(() => this.fileService.getFile(file))),
+        //concatAll()
+        mergeAll(20)
       )
       .subscribe(
         (fileResponse: ArrayBuffer) => {
@@ -109,21 +106,20 @@ export class ImageGridComponent implements OnInit {
   }
 
   loadList(): void {
-    this.fileService.getFileList(this.fileSize === this.VALUE_SMALL ? FileList.SMALL : FileList.LARGE)
+    this.fileService.getFileList()
       .subscribe(s => {
+        console.log(`Slength: ${s.length}`)
         this.fileList = s;
         this.loadImages();
+        this.updateFileFailPercent();
       });
   }
 
   ngOnInit(): void {
+    this.loadList();
   }
 
-  fileSizeValueChange($event: any) {
-    if ($event) {
-      this.fileSize = $event;
-      this.images = [];
-      this.loadList();
-    }
+  private updateFileFailPercent() {
+    this.fileService.getFileFailPercent().subscribe(v => this.fileFailPercent = v);
   }
 }
