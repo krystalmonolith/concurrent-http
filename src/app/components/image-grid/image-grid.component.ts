@@ -108,7 +108,6 @@ export class ImageGridComponent implements OnInit {
   loadList(): void {
     this.fileService.getFileList()
       .subscribe(s => {
-        console.log(`Slength: ${s.length}`)
         this.fileList = s;
         this.loadImages();
         this.updateFileFailPercent();
