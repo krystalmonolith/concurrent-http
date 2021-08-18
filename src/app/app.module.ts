@@ -6,7 +6,6 @@ import {HttpClientModule} from '@angular/common/http';
 import {MatTabsModule} from '@angular/material/tabs';
 import {MatCardModule} from '@angular/material/card'
 import {MatIconModule} from '@angular/material/icon';
-import {MatButtonToggleModule} from '@angular/material/button-toggle';
 
 import {AppComponent} from './app.component';
 import {AppRoutingModule} from './app-routing.module';
@@ -33,7 +32,6 @@ import {MatGridListModule} from '@angular/material/grid-list';
     HttpClientModule,
     MatCardModule,
     MatTabsModule,
-    MatButtonToggleModule,
     MatIconModule,
     MatGridListModule
   ],

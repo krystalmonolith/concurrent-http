@@ -1,12 +1,12 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
 
 const BASEURL = 'http://localhost:3000/';
 
-export enum FileList {
-  SMALL,
-  LARGE
+interface FileFailPercent {
+  fileFailPercent: number;
 }
 
 @Injectable({
@@ -14,16 +14,19 @@ export enum FileList {
 })
 export class FileService {
 
+
   constructor(private http: HttpClient) {
   }
 
-  getFileList(fileSize: FileList): Observable<Array<string>> {
-    const smallLarge = (fileSize == FileList.SMALL ? 'small' : 'large');
-    return this.http.get<Array<string>>(BASEURL + smallLarge + '/filelist');
+  getFileList(): Observable<Array<string>> {
+    return this.http.get<Array<string>>(BASEURL + 'filelist');
   }
 
-  getFile(fileSize: FileList, file: string): Observable<ArrayBuffer> {
-    const smallLarge = (fileSize == FileList.SMALL ? 'small' : 'large');
-    return this.http.get(BASEURL + smallLarge + '/file/' + file, {responseType: 'arraybuffer'});
+  getFile(file: string): Observable<ArrayBuffer> {
+    return this.http.get(BASEURL + 'file/' + file, {responseType: 'arraybuffer'});
+  }
+
+  getFileFailPercent(): Observable<number> {
+    return this.http.get<FileFailPercent>(BASEURL + 'filefailpercent').pipe(map(v => v['fileFailPercent']));
   }
 }
