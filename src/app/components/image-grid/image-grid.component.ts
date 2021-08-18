@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {FileList, FileService} from '../../services/file.service';
 import {MatButtonToggleGroup} from '@angular/material/button-toggle';
 
@@ -12,6 +12,7 @@ export class ImageGridComponent implements OnInit {
   readonly VALUE_SMALL = 'Small Images (100x100)';
   readonly VALUE_LARGE = 'Large Images (640x480)';
 
+  @Input() title: string = '';
   fileSize: string = this.VALUE_SMALL;
   fileList: Array<string> = [];
   @ViewChild('fileSizeGroup') fileSizeGroup?: MatButtonToggleGroup;
