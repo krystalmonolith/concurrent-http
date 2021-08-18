@@ -1,4 +1,5 @@
 import {Component, OnInit} from '@angular/core';
+import {FileList, FileService} from '../../services/file.service';
 
 @Component({
   selector: 'app-concat',
@@ -7,10 +8,13 @@ import {Component, OnInit} from '@angular/core';
 })
 export class ConcatComponent implements OnInit {
 
-  constructor() {
+  fileList: Array<string> = [];
+
+  constructor(private fileService: FileService) {
   }
 
   ngOnInit(): void {
+    this.fileService.getFileList(FileList.SMALL).subscribe(s => this.fileList = s);
   }
 
 }
