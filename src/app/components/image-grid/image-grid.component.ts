@@ -106,6 +106,8 @@ export class ImageGridComponent implements OnInit {
   }
 
   loadList(): void {
+    this.fileList = [];
+    this.images = [];
     this.fileService.getFileList()
       .subscribe(s => {
         this.fileList = s;
@@ -120,5 +122,9 @@ export class ImageGridComponent implements OnInit {
 
   private updateFileFailPercent() {
     this.fileService.getFileFailPercent().subscribe(v => this.fileFailPercent = v);
+  }
+
+  refresh() {
+    this.loadList();
   }
 }

@@ -1,12 +1,16 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
-import {map} from 'rxjs/operators';
+import {catchError, map} from 'rxjs/operators';
 
 const BASEURL = 'http://localhost:3000/';
 
 interface FileFailPercent {
   fileFailPercent: number;
+}
+
+interface FileDelayMsec {
+  fileDelayMsec: number;
 }
 
 @Injectable({
@@ -28,5 +32,17 @@ export class FileService {
 
   getFileFailPercent(): Observable<number> {
     return this.http.get<FileFailPercent>(BASEURL + 'filefailpercent').pipe(map(v => v['fileFailPercent']));
+  }
+
+  putFileFailPercent(percent: number): void {
+    this.http.put<number>(BASEURL + 'filefailpercent', percent).pipe(catchError(err => { throw `PUT Percent Error: ${JSON.stringify(err,null,2)}`; }));
+  }
+
+  getFileDelayMsec(): Observable<number> {
+    return this.http.get<FileDelayMsec>(BASEURL + 'filedelaymsec').pipe(map(v => v['fileDelayMsec']));
+  }
+
+  putFileDelayMsec(delay: number): void {
+    this.http.put<number>(BASEURL + 'filedelaymsec', delay).pipe(catchError(err => { throw `PUT Delay Error: ${JSON.stringify(err,null,2)}`; }));
   }
 }
