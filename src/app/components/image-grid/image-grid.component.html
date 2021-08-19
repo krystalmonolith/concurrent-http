@@ -1,5 +1,5 @@
 <mat-card><h3>{{title}}</h3></mat-card>
-<div>{{fileFailPercent}}</div>
+<mat-card><app-parameter-form (refreshEvent)="refresh()"></app-parameter-form></mat-card>
 <mat-grid-list cols="12" rowHeight="50px">
   <mat-grid-tile *ngFor="let image of images"><img src="{{image}}" alt="test image"/></mat-grid-tile>
 </mat-grid-list>

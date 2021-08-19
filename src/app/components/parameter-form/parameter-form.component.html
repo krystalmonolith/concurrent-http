@@ -1,0 +1,11 @@
+<form [formGroup]="parametersForm">
+  <mat-form-field appearance="fill">
+    <mat-label>Server File Failure Percentage</mat-label>
+    <input id="fileFailPercentageControl" style="width: 3em;" type="number" min="0" max="100" formControlName="fileFailPercentageControl" matInput>
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Server File Delay (msec)</mat-label>
+    <input id="fileDelayMsecControl" style="width: 4em;" type="number" min="0" max="1000" formControlName="fileDelayMsecControl" matInput>
+  </mat-form-field>
+  &nbsp;<button mat-raised-button color="primary" (click)="refresh()">Refresh</button>
+</form>
