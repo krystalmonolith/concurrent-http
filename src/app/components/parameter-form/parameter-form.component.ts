@@ -40,9 +40,11 @@ export class ParameterFormComponent implements OnInit {
       const delayValid = this.parametersForm.controls.fileDelayMsecControl.valid;
       console.log(JSON.stringify(v,null,2) + ` Valid: ${formValid} FFPValid: ${percentValid} FDValid: ${delayValid}`);
       if (percentValid) {
+        console.log(`PUTPERCENT: ${this.parametersForm.controls.fileFailPercentageControl.value}`)
         this.fileService.putFileFailPercent(this.parametersForm.controls.fileFailPercentageControl.value);
       }
       if (delayValid) {
+        console.log(`PUTDELAY: ${this.parametersForm.controls.fileDelayMsecControl.value}`)
         this.fileService.putFileDelayMsec(this.parametersForm.controls.fileDelayMsecControl.value);
       }
     });

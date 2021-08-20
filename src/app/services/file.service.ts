@@ -35,7 +35,9 @@ export class FileService {
   }
 
   putFileFailPercent(percent: number): void {
-    this.http.put<number>(BASEURL + 'filefailpercent', percent).pipe(catchError(err => { throw `PUT Percent Error: ${JSON.stringify(err,null,2)}`; }));
+    this.http.put<number>(BASEURL + 'filefailpercent/'+ percent, {})
+      .subscribe({ next: v => console.log(`DELAY: ${JSON.stringify(v,null,2)}`),
+                            error: err => { throw `PUT PERCENT Error: ${JSON.stringify(err, null, 2)}`;}});
   }
 
   getFileDelayMsec(): Observable<number> {
@@ -43,6 +45,8 @@ export class FileService {
   }
 
   putFileDelayMsec(delay: number): void {
-    this.http.put<number>(BASEURL + 'filedelaymsec', delay).pipe(catchError(err => { throw `PUT Delay Error: ${JSON.stringify(err,null,2)}`; }));
+    this.http.put<number>(BASEURL + 'filedelaymsec/'+ delay, {})
+      .subscribe({ next: v => console.log(`DELAY: ${JSON.stringify(v,null,2)}`),
+                            error: err => { throw `PUT Delay Error: ${JSON.stringify(err, null, 2)}`; }});
   }
 }
