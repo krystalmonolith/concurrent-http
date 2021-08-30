@@ -8,7 +8,7 @@ import {ThemePalette} from '@angular/material/core';
 })
 export class AppComponent {
   readonly title = 'concurrent-http';
-  readonly version = '1.2';
+  readonly version = '1.2.0';
   readonly buildDate = '20210830';
   readonly background: ThemePalette = 'primary';
 
