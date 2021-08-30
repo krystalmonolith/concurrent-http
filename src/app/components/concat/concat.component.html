@@ -1,2 +1,6 @@
-<app-image-grid [title]="'Sequential fetch with the RxJS concatAll() function.'" [fetchMode]="mode"></app-image-grid>
+<!--
+Note that the [loadDelegate]="loadImagesConcatAll" does not contain any parenthesis
+because we are passing a reference to member function loadImagesConcatAll using a delegation pattern, i.e., we are *not* calling it here!
+-->
+<app-image-grid [title]="'Sequential fetch with the RxJS concatAll() function.'" [loadImageDelegate]="loadImagesConcatAll"></app-image-grid>
 

@@ -7,13 +7,15 @@ import {ThemePalette} from '@angular/material/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'concurrent-http';
-  @ViewChild('sliderText') sliderText!: ElementRef;
+  readonly title = 'concurrent-http';
+  readonly version = '1.1';
+  readonly buildDate = '20210830';
+  readonly background: ThemePalette = 'primary';
 
+  @ViewChild('sliderText') sliderText!: ElementRef;
   links = [
     {label: 'RxJS concatAll()', route: '/concat'},
     {label: 'RxJS mergeAll()', route: '/merge'},
     {label: 'RxJS mergeAll() with retry', route: '/mergeretry'}
   ];
-  background: ThemePalette = 'primary';
 }

@@ -1,1 +1,5 @@
-<app-image-grid [title]="'Concurrent fetch with the RxJS mergeAll() function.'" [fetchMode]="mode"></app-image-grid>
+<!--
+Note that the [loadDelegate]="loadImagesMergeAll" does not contain any parenthesis
+because we are passing a reference to member function loadImagesMergeAll using a delegation pattern, i.e., we are *not* calling it here!
+-->
+<app-image-grid [title]="'Concurrent fetch with the RxJS mergeAll() function.'" [loadImageDelegate]="loadImagesMergeAll"></app-image-grid>

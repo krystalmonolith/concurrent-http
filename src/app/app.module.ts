@@ -29,6 +29,7 @@ import {MatButtonModule} from '@angular/material/button';
     MergeComponent,
     MergeRetryComponent,
     ImageGridComponent,
+
     ParameterFormComponent
   ],
   imports: [
