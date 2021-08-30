@@ -1,7 +1,7 @@
 import {Component} from '@angular/core';
 import {ImageGridComponent} from '../image-grid/image-grid.component';
 import {FileService} from '../../services/file.service';
-import {defer, from, Observable} from 'rxjs';
+import {from, Observable} from 'rxjs';
 import {map, mergeAll, retry} from 'rxjs/operators';
 
 @Component({
@@ -23,7 +23,7 @@ export class MergeRetryComponent {
     return new Observable(subscriber => {
       from(fileList)
         .pipe(
-          map((file: string) => defer(() => this.fileService.getFile(file).pipe(retry(MergeRetryComponent.RETRY_COUNT)))),
+          map((file: string) => this.fileService.getFile(file).pipe(retry(MergeRetryComponent.RETRY_COUNT))),
           mergeAll(MergeRetryComponent.CONCURRENT_GET_COUNT) // PARALLEL !!!
         )
         .subscribe(

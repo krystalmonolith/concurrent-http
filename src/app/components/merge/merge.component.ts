@@ -1,6 +1,6 @@
 import {Component} from '@angular/core';
 import {FileService} from '../../services/file.service';
-import {defer, from, Observable} from 'rxjs';
+import {from, Observable} from 'rxjs';
 import {map, mergeAll} from 'rxjs/operators';
 import {ImageGridComponent} from '../image-grid/image-grid.component';
 
@@ -22,7 +22,7 @@ export class MergeComponent {
     return new Observable(subscriber => {
       from(fileList)
         .pipe(
-          map((file: string) => defer(() => this.fileService.getFile(file))),
+          map((file: string) => this.fileService.getFile(file)),
           mergeAll(MergeComponent.CONCURRENT_GET_COUNT) // PARALLEL !!!
         )
         .subscribe(

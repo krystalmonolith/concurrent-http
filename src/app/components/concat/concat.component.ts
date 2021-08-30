@@ -1,7 +1,7 @@
 import {Component} from '@angular/core';
 import {ImageGridComponent} from '../image-grid/image-grid.component';
 import {FileService} from '../../services/file.service';
-import {defer, from, Observable} from 'rxjs';
+import {from, Observable} from 'rxjs';
 import {concatAll, map} from 'rxjs/operators';
 
 @Component({
@@ -20,7 +20,7 @@ export class ConcatComponent {
     return new Observable(subscriber => {
       from(fileList)
         .pipe(
-          map((file: string) => defer(() => this.fileService.getFile(file))),
+          map((file: string) => this.fileService.getFile(file)),
           concatAll() // SEQUENTIAL !!!
         )
         .subscribe(
