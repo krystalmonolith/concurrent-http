@@ -1,4 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import {Component} from '@angular/core';
+import {FileService} from '../../services/file.service';
+import {defer, from, Observable} from 'rxjs';
+import {map, mergeAll} from 'rxjs/operators';
 import {ImageGridComponent} from '../image-grid/image-grid.component';
 
 @Component({
@@ -6,13 +9,27 @@ import {ImageGridComponent} from '../image-grid/image-grid.component';
   templateUrl: './merge.component.html',
   styleUrls: ['./merge.component.scss']
 })
-export class MergeComponent implements OnInit {
+export class MergeComponent {
 
-  readonly mode = ImageGridComponent.FETCH_MODE_MERGE;
+  static readonly CONCURRENT_GET_COUNT = 20;
 
-  constructor() { }
-
-  ngOnInit(): void {
+  constructor(private fileService: FileService) {
   }
 
+  loadImagesMergeAll(fileList: Array<string>,
+                     imageGridComponent: ImageGridComponent,
+                     imagePusher: (imageGridComponent: ImageGridComponent, fileResponse: ArrayBuffer) => void): Observable<void> {
+    return new Observable(subscriber => {
+      from(fileList)
+        .pipe(
+          map((file: string) => defer(() => this.fileService.getFile(file))),
+          mergeAll(MergeComponent.CONCURRENT_GET_COUNT) // PARALLEL !!!
+        )
+        .subscribe(
+          (fileResponse: ArrayBuffer) => imagePusher(imageGridComponent, fileResponse),
+          (err: any) => subscriber.error(err),
+          () => console.log(`Image loading via mergeAll() COMPLETE!`)
+        );
+    });
+  }
 }
