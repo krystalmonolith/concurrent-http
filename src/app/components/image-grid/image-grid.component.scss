@@ -1,3 +1,20 @@
-.outer {
+.exception {
+  color: orangered;
+  background: darkblue;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2px;
+}
+
+.exceptionOuter {
+  background: darkcyan;
   margin-bottom: 1em;
+}
+
+.exceptionContainer {
+  margin-top: 1em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
