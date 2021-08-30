@@ -1,7 +1,6 @@
-import {Component, OnInit, Output, EventEmitter} from '@angular/core';
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormControl, Validators} from '@angular/forms';
 import {FileService} from '../../services/file.service';
-import {tap} from 'rxjs/operators';
 
 const PERCENT_MIN = 0;
 const PERCENT_MAX = 100;
@@ -29,22 +28,21 @@ export class ParameterFormComponent implements OnInit {
         [Validators.required, Validators.min(DELAY_MSEC_MIN), Validators.max(DELAY_MSEC_MAX)])
   });
 
-  constructor(private formBuilder: FormBuilder, private fileService: FileService) { }
+  constructor(private formBuilder: FormBuilder, private fileService: FileService) {
+  }
 
   ngOnInit(): void {
-    this.fileService.getFileFailPercent().pipe(tap(v => console.log(`P: ${v}`))).subscribe(percent => this.parametersForm.controls.fileFailPercentageControl.setValue(percent));
-    this.fileService.getFileDelayMsec().pipe(tap(v => console.log(`D: ${v}`))).subscribe(delay => this.parametersForm.controls.fileDelayMsecControl.setValue(delay));
-    this.parametersForm.valueChanges.subscribe(v => {
-      const formValid = this.parametersForm.valid;
+    this.fileService.getFileFailPercent()
+      .subscribe(percent => this.parametersForm.controls.fileFailPercentageControl.setValue(percent));
+    this.fileService.getFileDelayMsec()
+      .subscribe(delay => this.parametersForm.controls.fileDelayMsecControl.setValue(delay));
+    this.parametersForm.valueChanges.subscribe(() => {
       const percentValid = this.parametersForm.controls.fileFailPercentageControl.valid;
       const delayValid = this.parametersForm.controls.fileDelayMsecControl.valid;
-      console.log(JSON.stringify(v,null,2) + ` Valid: ${formValid} FFPValid: ${percentValid} FDValid: ${delayValid}`);
       if (percentValid) {
-        console.log(`PUTPERCENT: ${this.parametersForm.controls.fileFailPercentageControl.value}`)
         this.fileService.putFileFailPercent(this.parametersForm.controls.fileFailPercentageControl.value);
       }
       if (delayValid) {
-        console.log(`PUTDELAY: ${this.parametersForm.controls.fileDelayMsecControl.value}`)
         this.fileService.putFileDelayMsec(this.parametersForm.controls.fileDelayMsecControl.value);
       }
     });

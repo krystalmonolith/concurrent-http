@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
-import {catchError, map} from 'rxjs/operators';
+import {map} from 'rxjs/operators';
 
 const BASEURL = 'http://localhost:3000/';
 
@@ -35,9 +35,12 @@ export class FileService {
   }
 
   putFileFailPercent(percent: number): void {
-    this.http.put<number>(BASEURL + 'filefailpercent/'+ percent, {})
-      .subscribe({ next: v => console.log(`DELAY: ${JSON.stringify(v,null,2)}`),
-                            error: err => { throw `PUT PERCENT Error: ${JSON.stringify(err, null, 2)}`;}});
+    this.http.put<number>(BASEURL + 'filefailpercent/' + percent, {})
+      .subscribe({
+        error: err => {
+          throw `PUT PERCENT Error: ${JSON.stringify(err, null, 2)}`;
+        }
+      });
   }
 
   getFileDelayMsec(): Observable<number> {
@@ -45,8 +48,11 @@ export class FileService {
   }
 
   putFileDelayMsec(delay: number): void {
-    this.http.put<number>(BASEURL + 'filedelaymsec/'+ delay, {})
-      .subscribe({ next: v => console.log(`DELAY: ${JSON.stringify(v,null,2)}`),
-                            error: err => { throw `PUT Delay Error: ${JSON.stringify(err, null, 2)}`; }});
+    this.http.put<number>(BASEURL + 'filedelaymsec/' + delay, {})
+      .subscribe({
+        error: err => {
+          throw `PUT Delay Error: ${JSON.stringify(err, null, 2)}`;
+        }
+      });
   }
 }

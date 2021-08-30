@@ -1,10 +1,16 @@
 <mat-card><h3>{{title}}</h3></mat-card>
-<mat-card><app-parameter-form (refreshEvent)="refresh()"></app-parameter-form></mat-card>
+<mat-card >
+  <app-parameter-form (refreshEvent)="refresh()"></app-parameter-form>
+</mat-card>
+<div class="exceptionContainer">
+  <mat-card *ngIf="imageFetchError" class="exceptionOuter">
+    <mat-card-title class="exception">{{imageFetchError}}</mat-card-title>
+    <mat-card-subtitle class="exception">{{imageFetchErrorFilename}}</mat-card-subtitle>
+  </mat-card>
+</div>
 <mat-grid-list cols="12" rowHeight="50px">
-  <mat-grid-tile *ngFor="let image of images"><img src="{{image}}" alt="test image"/></mat-grid-tile>
+  <mat-grid-tile *ngFor="let image of images">
+    <img src="{{image}}" alt="test image"/>
+  </mat-grid-tile>
 </mat-grid-list>
-
-<ul>
-  <li *ngFor="let file of fileList">{{file}}</li>
-</ul>
 
