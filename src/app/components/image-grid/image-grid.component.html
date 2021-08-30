@@ -1,6 +1,15 @@
 <mat-card><h3>{{title}}</h3></mat-card>
-<mat-card >
+<mat-card>
   <app-parameter-form (refreshEvent)="refresh()"></app-parameter-form>
+  <div></div>
+  <div>
+    <p style="margin-top: 2px; margin-bottom: 2px;">
+      <button>{{images.length}}</button>&nbsp;of&nbsp;<button>{{imageCount}}</button>&nbsp;&nbsp;
+      <button *ngIf="elapsedTimeMsec > 0">Elapsed Milliseconds: {{elapsedTimeMsec}}</button>
+    </p>
+    <mat-progress-bar mode="determinate" class="_mat-animation-noopable" value="{{imagePercentage}}"
+                      [color]="imageFetchError === undefined ? 'primary' : 'warn'"></mat-progress-bar>&nbsp;&nbsp;
+  </div>
 </mat-card>
 <div class="exceptionContainer">
   <mat-card *ngIf="imageFetchError" class="exceptionOuter">

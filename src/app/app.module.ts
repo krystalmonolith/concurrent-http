@@ -17,10 +17,11 @@ import {MergeRetryComponent} from './components/merge-retry/merge-retry.componen
 import {ConcatComponent} from './components/concat/concat.component';
 import {MatGridListModule} from '@angular/material/grid-list';
 import {ReactiveFormsModule} from '@angular/forms';
-import { ParameterFormComponent } from './components/parameter-form/parameter-form.component';
+import {ParameterFormComponent} from './components/parameter-form/parameter-form.component';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
 import {MatButtonModule} from '@angular/material/button';
+import {MatProgressBarModule} from '@angular/material/progress-bar';
 
 @NgModule({
   declarations: [
@@ -29,7 +30,6 @@ import {MatButtonModule} from '@angular/material/button';
     MergeComponent,
     MergeRetryComponent,
     ImageGridComponent,
-
     ParameterFormComponent
   ],
   imports: [
@@ -44,7 +44,8 @@ import {MatButtonModule} from '@angular/material/button';
     MatGridListModule,
     MatFormFieldModule,
     MatInputModule,
-    MatButtonModule
+    MatButtonModule,
+    MatProgressBarModule
   ],
   providers: [
     FileService
