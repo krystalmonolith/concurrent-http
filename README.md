@@ -16,7 +16,16 @@ _My original use case for concurrent retrieval was to load GZip'ed BLOBs of lati
 
 <hr/>
 
-# The concurrent-http-server is required to run this demonstration...
+# Prerequsites
+
+The whole shebang depends on having [Node.js](https://nodejs.org/en/) installed... I'm running:
+
+```bash
+$ node -v
+v12.18.4
+```
+
+## The concurrent-http-server is _required_ to run this demonstration
 
 ### See the GitHub [concurrent-http-server](https://github.com/krystalmonolith/concurrent-http-server) repository.
 
@@ -28,7 +37,9 @@ There are three primary REST endpoints and a PNG file BLOB retrieval endpoint.
 2. A REST endpoint that allows the server to delay the return of the BLOBs in the PNG BLOB endpoint up to one second to augment the visual aspect of the demonstration as well as show the advantages of concurrent retrieval over sequential retrieval. It accepts a number from 0-1000 milliseconds of delay.
 3. A REST endpoint that that enables a random "503 Server Unavailable" failure in the PNG BLOB retrieval endpoint to allow experimenting with retries. It accepts a number from 0-100 representing the percentage of random failures. Set it to zero to disable random failures.      
 
-## Cloning and Running the concurrent-http-server (Linux)
+<hr/>
+
+# Cloning and Running the concurrent-http-server (Linux)
 
 ```bash
 $ git clone https://github.com/krystalmonolith/concurrent-http-server.git
@@ -38,8 +49,85 @@ $ npm start
 ```
 If it is running correctly you should see:
 ```
+$ npm start
 concurrent-http-server listening at http://localhost:3000
 ```
+<hr/>
+
+# Cloning and running the concurrent-http Angular application
+
+Once the concurrent-http-server Express server is running, the concurrent-http Angular application can be installed and run as follows:
+
+```bash
+$ git clone https://github.com/krystalmonolith/concurrent-http.git
+$ cd concurrent-http
+$ npm install
+$ npm start
+```
+
+Generating the following output:
+
+```
+$ npm start
+
+> concurrent-http@1.2.0 start
+> ng serve
+
+✔ Browser application bundle generation complete.
+
+Initial Chunk Files | Names         |      Size
+vendor.js           | vendor        |   4.02 MB
+polyfills.js        | polyfills     | 128.51 kB
+styles.css          | styles        |  77.82 kB
+main.js             | main          |  55.92 kB
+runtime.js          | runtime       |   6.63 kB
+
+                    | Initial Total |   4.28 MB
+
+Build at: 2021-09-01T19:33:41.631Z - Hash: 0dac07b335f7f4582e3d - Time: 9779ms
+
+** Angular Live Development Server is listening on localhost:4200, open your browser on http://localhost:4200/ **
+
+
+✔ Compiled successfully.
+```
+<hr/>
+
+# Operational Description
+
+As the above output says: Open the page at [http://localhost:4200/](http://localhost:4200/)
+
+```
+** Angular Live Development Server is listening on localhost:4200, open your browser on http://localhost:4200/ **
+```
+
+You should be presented a page that is initially blank with a title and three tabs: Click on any tab to initiate loading the 228 PNG files from the server.
+
+* When clicked the "RxJS concatAll()" tab demonstrates <strong>sequential</strong> retrieval of the 228 PNG files.
+* When clicked the "RxJS mergeAll()" tab demonstrates <strong>concurrent</strong> retrieval of the 228 PNG files <strong>without any retries</strong>.
+* When clicked the "RxJS mergeAll() with retry" tab demonstrates <strong>concurrent</strong> retrieval of the 228 PNG files <strong>with retries</strong>.
+
+Above the images are two numeric spinners that control how the server responds:
+
+* The "Server Random File %" spinner controls the percentage of the PNG file requests that fail with a "503 Service Unavailable" error. 
+  * Set it to zero to disable random failures.
+  * Set to a low number (1%-10%) to see some loading before a PNG file request failure occurs.
+  * Set it higher to really screw up the PNG file requests.
+  
+* The "Server File Delay (msec)" spinner sets the delay the server introduces before responding to a PNG file request.
+  * Set it to zero to disable the server PNG file request delay.
+  * It defaults to 50 msec to best show the difference between sequential and concurrent retrievals.
+  * Crank it up to 100 msec to see how much better concurrent retrieval handles long server computational delays.
+
+
+<hr/>
+
+# Source Code Description
+
+I started with an Angular CLI generated application, then I added the Angular Material schematic.
+
+... more to come.
+
 <hr/>
 
 # Angular Instructions
