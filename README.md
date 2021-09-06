@@ -16,7 +16,7 @@ _My original use case for concurrent retrieval was to load GZip'ed BLOBs of lati
 
 <hr/>
 
-# Prerequsites
+# Prerequisites
 
 The whole shebang depends on having [Node.js](https://nodejs.org/en/) installed... I'm running:
 
@@ -101,7 +101,7 @@ As the above output says: Open the page at [http://localhost:4200/](http://local
 ** Angular Live Development Server is listening on localhost:4200, open your browser on http://localhost:4200/ **
 ```
 
-You should be presented a page that is initially blank with a title and three tabs: Click on any tab to initiate loading the 228 PNG files from the server.
+You should be presented a page that is initially blank with a title and three tabs: Click on any tab to initiate retries of the 228 PNG files from the server.
 
 * When clicked the "RxJS concatAll()" tab demonstrates <strong>sequential</strong> retrieval of the 228 PNG files.
 * When clicked the "RxJS mergeAll()" tab demonstrates <strong>concurrent</strong> retrieval of the 228 PNG files <strong>without any retries</strong>.
@@ -111,7 +111,7 @@ Above the images are two numeric spinners that control how the server responds:
 
 * The "Server Random File %" spinner controls the percentage of the PNG file requests that fail with a "503 Service Unavailable" error. 
   * Set it to zero to disable random failures.
-  * Set to a low number (1%-10%) to see some loading before a PNG file request failure occurs.
+  * Set to a low number (1%-10%) to see some retrieval before a PNG file request failure occurs.
   * Set it higher to really screw up the PNG file requests.
   
 * The "Server File Delay (msec)" spinner sets the delay the server introduces before responding to a PNG file request.
@@ -124,10 +124,143 @@ Above the images are two numeric spinners that control how the server responds:
 
 # Source Code Description
 
-I started with an Angular CLI generated application, then I added the Angular Material schematic.
+![Module/Component/Service Relationship Diagram](https://github.com/krystalmonolith/concurrent-http/blob/master/graphviz/images/module-component-service-relationship.svg)
 
-... more to come.
+I started with an Angular CLI generated application with routing, then I added the Angular Material schematic.
 
+### Components
+
+Top level component `AppComponent` &lpar;[app.component.ts](https://github.com/krystalmonolith/concurrent-http/blob/master/src/app/app.component.ts) &amp; [app.component.html](https://github.com/krystalmonolith/concurrent-http/blob/master/src/app/app.component.html) &rpar; contains the Angular Material **&lt;mat-tab-group&gt;** component and the router outlet. When a **&lt;mat-tab&gt;** is clicked the router outlet displays one of:
+
+* `ConcatComponent` &lpar; [concat.component.ts](https://github.com/krystalmonolith/concurrent-http/blob/master/src/app/components/concat/concat.component.ts) &amp; [concat.component.html](https://github.com/krystalmonolith/concurrent-http/blob/master/src/app/components/concat/concat.component.html) &rpar;
+* `MergeComponent` &lpar; [merge.component.ts](https://github.com/krystalmonolith/concurrent-http/blob/master/src/app/components/merge/merge.component.ts) &amp; [merge.component.html](https://github.com/krystalmonolith/concurrent-http/blob/master/src/app/components/merge/merge.component.html) &rpar;
+* `MergeRetryComponent` &lpar; [merge-retry.component.ts](https://github.com/krystalmonolith/concurrent-http/blob/master/src/app/components/merge-retry/merge-retry.component.ts) &amp; [merge-retry.component.html](https://github.com/krystalmonolith/concurrent-http/blob/master/src/app/components/merge-retry/merge-retry.component.html) &rpar;
+
+`ConcatComponent`, `MergeComponent`,`MergeRetryComponent` are all composed of `ImageGridComponent` &lpar; [image-grid.component.ts](https://github.com/krystalmonolith/concurrent-http/blob/master/src/app/components/image-grid/image-grid.component.ts) &amp; [image-grid.component.html](https://github.com/krystalmonolith/concurrent-http/blob/master/src/app/components/image-grid/image-grid.component.html) &rpar; which uses an Angular Material **&lt;mat-grid-list&gt;** component to display the images.
+
+`ImageGridComponent` is composed of a `ParameterFormComponent` &lpar; [parameter-form.component.ts](https://github.com/krystalmonolith/concurrent-http/blob/master/src/app/components/parameter-form/parameter-form.component.ts) &amp; [parameter-form.component.html](https://github.com/krystalmonolith/concurrent-http/blob/master/src/app/components/parameter-form/parameter-form.component.html) &rpar; and uses **&lt;mat-progress-bar&gt;** to display the retrieval progress.
+
+### Image Retrieval Delegation
+
+`ConcatComponent`, `MergeComponent`,`MergeRetryComponent` all contain delegate functions to perform the actual retrieval of the images via functions `ConcatComponent.loadImagesConcatAll`, `MergeComponent.loadImagesMergeAll`, and MergeRetryComponent.loadImagesMergeAllWithRetry respectively. These delegate functions are invoked as part of `ImageGridComponent.ngOnInit` invoking `ImageGridComponent.loadList`.
+
+`ImageGridComponent.loadList` shown below uses `FileService.getFileList` service function to enumerate the file names of the image files, then passes the list of files to the `loadImageDelegate` to perform the actual image retrievals via the delegate functions noted above.
+
+```
+  loadList(): void {
+    // Clear out the old images and error information.
+    this.images = [];
+    this.imageCount = 0;
+    this.imagePercentage = 0;
+    this.imageFetchError = undefined;
+    this.imageFetchErrorFilename = undefined;
+    this.elapsedTimeMsec = 0;
+
+    // Fetch the list of files from FileService.
+    this.fileService.getFileList()
+      .subscribe(fileList => {
+        // Call the image loading delegate function to attempt to load all the images in the 'fileList'.
+        this.imageCount = fileList.length;
+        this.loadStartTime = Date.now();
+        this.loadImageDelegate!(fileList, this, this.pushImage).subscribe({
+          error: err => {
+            this.imageFetchError = `${err['status']} ${err['statusText']}`;
+            this.imageFetchErrorFilename = err['url'];
+          }
+        });
+      });
+  }
+```
+### Sequential Image Retrieval Delegate using _concatAll_
+
+Image retrieval delegate function `ConcatComponent.loadImagesConcatAll` shown below uses the RxJS `concatAll` operator to perform _sequential_ retrieval. It returns an 'outer' RxJS `Observable` that when subscribed uses the RXJS `from` function to create a stream of `Observable`... One `Observable` for each file name in the file list. 
+
+The RxJS `Observable.pipe` function then takes each file name `Observable` and:
+* First uses the RxJS `map` operator to transform the file name `Observable` into a PNG BLOB `ArrayBuffer` `Observable` via the `FileService.getFile` service function.
+* Second uses the RxJS `concatAll` operator to _sequentially_ stream each PNG BLOB `ArrayBuffer` to the `pipe` function's subscriber.
+
+The output of the `pipe` operator is then subscribed to push the PNG BLOB into the **&lt;mat-grid-list&gt;**, and chain any errors out the 'outer' `Observable` error handler, or log a message to the `Console` if everything 'completes' successfully.
+
+(The `imagePusher` callback is responsible for encoding the PNG BLOB to BASE64 before inserting it into the array backing the **&lt;mat-grid-list&gt;**. See `ImageGridComponent.pushImage`) 
+
+
+```
+loadImagesConcatAll(fileList: Array<string>,
+                      imageGridComponent: ImageGridComponent,
+                      imagePusher: (imageGridComponent: ImageGridComponent, fileResponse: ArrayBuffer) => void): Observable<void> {
+    return new Observable(subscriber => {
+      from(fileList)
+        .pipe(
+          map((file: string) => this.fileService.getFile(file)),
+          concatAll() // SEQUENTIAL !!!
+        )
+        .subscribe(
+          (fileResponse: ArrayBuffer) => imagePusher(imageGridComponent, fileResponse),
+          (err: any) => subscriber.error(err),
+          () => console.log(`Image loading via concatAll() COMPLETE!`)
+        );
+    });
+  }
+}
+```
+
+### Concurrent Image Retrieval Delegate using _mergeAll_
+
+Image retrieval delegate function `MergeComponent.loadImagesMergeAll` shown below uses the RxJS `mergeAll` operator to perform _concurrent_ retrieval.
+
+```
+  loadImagesMergeAll(fileList: Array<string>,
+                     imageGridComponent: ImageGridComponent,
+                     imagePusher: (imageGridComponent: ImageGridComponent, fileResponse: ArrayBuffer) => void): Observable<void> {
+    return new Observable(subscriber => {
+      from(fileList)
+        .pipe(
+          map((file: string) => this.fileService.getFile(file)),
+          mergeAll(MergeComponent.CONCURRENT_GET_COUNT) // PARALLEL !!!
+        )
+        .subscribe(
+          (fileResponse: ArrayBuffer) => imagePusher(imageGridComponent, fileResponse),
+          (err: any) => subscriber.error(err),
+          () => console.log(`Image loading via mergeAll() COMPLETE!`)
+        );
+    });
+  }
+```
+
+`MergeComponent.loadImagesMergeAll` operates similarly to `ConcatComponent.loadImagesConcatAll` with two differences:
+
+* It uses the RxJS `mergeAll` operator to _concurrently_ stream each PNG BLOB `ArrayBuffer` to the `pipe` function's subscriber.
+* The RxJS `mergeAll` operator accepts the constant numeric parameter `MergeComponent.CONCURRENT_GET_COUNT` that limits the maximum number of concurrent retrievals to avoid overloading the server.
+
+### Concurrent failure tolerant Image Retrieval Delegate using _mergeAll_ and _retry_
+
+Image retrieval delegate function `MergeRetryComponent.loadImagesMergeAllWithRetry` shown below uses the RxJS `mergeAll` operator in conjunction with the RxJS `retry` operator to perform _concurrent_ retrieval that can tolerate network and server failures.
+
+```
+  loadImagesMergeAllWithRetry(fileList: Array<string>,
+                              imageGridComponent: ImageGridComponent,
+                              imagePusher: (imageGridComponent: ImageGridComponent, fileResponse: ArrayBuffer) => void): Observable<void> {
+    return new Observable(subscriber => {
+      from(fileList)
+        .pipe(
+          map((file: string) => this.fileService.getFile(file).pipe(retry(MergeRetryComponent.RETRY_COUNT))),
+          mergeAll(MergeRetryComponent.CONCURRENT_GET_COUNT) // PARALLEL !!!
+        )
+        .subscribe(
+          (fileResponse: ArrayBuffer) => imagePusher(imageGridComponent, fileResponse),
+          (err: any) => subscriber.error(err),
+          () => console.log(`Image loading via mergeAll() with retry() COMPLETE!`)
+        );
+    });
+  }
+```
+
+`MergeRetryComponent.loadImagesMergeAllWithRetry` operates similarly to `MergeComponent.loadImagesMergeAll` with two differences:
+
+* The retrieval of the PNG BLOB is automatically retried via the `pipe(retry(MergeRetryComponent.RETRY_COUNT))` appended to the RxJS `map` operator.
+* The RxJS `retry` operator accepts the constant numeric parameter `MergeComponent.RETRY_COUNT` that limits the maximum number of retrievals per PNG BLOB to avoid retrying forever.
+
+(This is an example of a `pipe` within a `pipe`... Moving the `retry` `pipe` to after the outer `pipe` and before the `subscribe` call retries _all_ the concurrent retrievals.)
 <hr/>
 
 # Angular Instructions

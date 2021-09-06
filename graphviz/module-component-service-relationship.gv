@@ -1,0 +1,35 @@
+digraph component_structure {
+
+      labelloc="t";
+      label="Module/Component/Service Relationship";
+      fontsize=24;
+
+      am [label="app-module.ts"];
+      ac [label="app.component.ts"];
+      arm [label="app-routing.module.ts"];
+      ig [label="image-grid.component.ts"]
+      pf [label="parameter-form.component.ts"]
+      c [label="concat.component.ts"]
+      m [label="merge.component.ts"]
+      mr [label="merge-retry.component.ts"]
+      fs [label="file.service.ts" fontsize=10 shape=cylinder]
+
+      am -> ac [label="bootstrap" fontsize=8];
+      am -> arm  [label="import" fontsize=8 dir=back];
+      c -> ig [label="ref" fontsize=8];
+      m -> ig [label="ref" fontsize=8];
+      mr -> ig [label="ref" fontsize=8];
+      ig -> pf [label="ref" fontsize=8];
+
+      edge [color=red];
+      pf -> fs [label="inject" fontsize=8 dir=back];
+      ig -> fs [label="inject" fontsize=8 dir=back];
+      c -> fs [label="inject" fontsize=8 dir=back];
+      m -> fs [label="inject" fontsize=8 dir=back];
+      mr -> fs [label="inject" fontsize=8 dir=back];
+
+      edge [style=dashed,color=blue];
+      ac -> c [label="route" fontsize=8];
+      ac -> m [label="route" fontsize=8];
+      ac -> mr [label="route" fontsize=8];
+}
