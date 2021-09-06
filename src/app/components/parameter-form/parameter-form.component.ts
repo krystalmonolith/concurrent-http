@@ -31,11 +31,16 @@ export class ParameterFormComponent implements OnInit {
   constructor(private formBuilder: FormBuilder, private fileService: FileService) {
   }
 
-  ngOnInit(): void {
+  loadParameters(): void {
     this.fileService.getFileFailPercent()
       .subscribe(percent => this.parametersForm.controls.fileFailPercentageControl.setValue(percent));
     this.fileService.getFileDelayMsec()
       .subscribe(delay => this.parametersForm.controls.fileDelayMsecControl.setValue(delay));
+  }
+
+
+  ngOnInit(): void {
+    this.loadParameters();
     this.parametersForm.valueChanges.subscribe(() => {
       const percentValid = this.parametersForm.controls.fileFailPercentageControl.valid;
       const delayValid = this.parametersForm.controls.fileDelayMsecControl.valid;
@@ -49,6 +54,7 @@ export class ParameterFormComponent implements OnInit {
   }
 
   refresh() {
+    this.loadParameters();
     this.refreshEvent.emit();
   }
 }
