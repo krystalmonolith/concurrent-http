@@ -257,10 +257,10 @@ Image retrieval delegate function `MergeRetryComponent.loadImagesMergeAllWithRet
 
 `MergeRetryComponent.loadImagesMergeAllWithRetry` operates similarly to `MergeComponent.loadImagesMergeAll` with two differences:
 
-* The retrieval of the PNG BLOB is automatically retried via the `pipe(retry(MergeRetryComponent.RETRY_COUNT))` appended to the RxJS `map` operator.
+* The retrieval of the PNG BLOB is automatically retried via the `pipe(retry(MergeRetryComponent.RETRY_COUNT))` appended to the `FileService.getFile` call inside the RxJS `map` operator.
 * The RxJS `retry` operator accepts the constant numeric parameter `MergeComponent.RETRY_COUNT` that limits the maximum number of retrievals per PNG BLOB to avoid retrying forever.
 
-(This is an example of a `pipe` within a `pipe`... Moving the `retry` `pipe` to after the outer `pipe` and before the `subscribe` call retries _all_ the concurrent retrievals.)
+(This is an example of a inner `pipe` within a `map` operator within an outer `pipe`... Moving the `retry` `pipe` to after the outer `pipe` and before the `subscribe` call retries _all_ the concurrent retrievals.)
 <hr/>
 
 # Angular Instructions
